@@ -122,6 +122,7 @@ $(obj)/config_data.h: $(obj)/config_data.gz FORCE
 
 $(obj)/time.o: $(obj)/timeconst.h
 
+<<<<<<< HEAD
 quiet_cmd_hzfile = HZFILE  $@
       cmd_hzfile = echo "hz=$(CONFIG_HZ)" > $@
 
@@ -136,3 +137,10 @@ targets += timeconst.h
 $(obj)/timeconst.h: $(obj)/hz.bc $(src)/timeconst.bc FORCE
 	$(call if_changed,bc)
 
+=======
+quiet_cmd_timeconst  = TIMEC   $@
+      cmd_timeconst  = $(PERL) $< $(CONFIG_HZ) > $@
+targets += timeconst.h
+$(obj)/timeconst.h: $(src)/timeconst.pl FORCE
+	$(call if_changed,timeconst)
+>>>>>>> upstream/cm-13.0

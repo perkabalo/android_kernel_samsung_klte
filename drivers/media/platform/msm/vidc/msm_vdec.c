@@ -934,7 +934,11 @@ int msm_vdec_s_parm(struct msm_vidc_inst *inst, struct v4l2_streamparm *a)
 
 	if ((fps % 15 == 14) || (fps % 24 == 23))
 		fps = fps + 1;
+<<<<<<< HEAD
 	else if ((fps % 24 == 1) || (fps % 15 == 1))
+=======
+	else if ((fps > 1) && ((fps % 24 == 1) || (fps % 15 == 1)))
+>>>>>>> upstream/cm-13.0
 		fps = fps - 1;
 
 	if (inst->prop.fps != fps) {

@@ -1204,7 +1204,11 @@ wl_show_host_event(wl_event_msg_t *event, void *event_data)
 #endif /* SHOW_EVENTS */
 
 int
+<<<<<<< HEAD
 wl_host_event(dhd_pub_t *dhd_pub, int *ifidx, void *pktdata,
+=======
+wl_host_event(dhd_pub_t *dhd_pub, int *ifidx, void *pktdata, size_t pktlen,
+>>>>>>> upstream/cm-13.0
               wl_event_msg_t *event, void **data_ptr)
 {
 	/* check whether packet is a BRCM event pkt */
@@ -1225,6 +1229,12 @@ wl_host_event(dhd_pub_t *dhd_pub, int *ifidx, void *pktdata,
 		return (BCME_ERROR);
 	}
 
+<<<<<<< HEAD
+=======
+	if (pktlen < sizeof(bcm_event_t))
+		return (BCME_ERROR);
+
+>>>>>>> upstream/cm-13.0
 	*data_ptr = &pvt_data[1];
 	event_data = *data_ptr;
 
@@ -1234,8 +1244,20 @@ wl_host_event(dhd_pub_t *dhd_pub, int *ifidx, void *pktdata,
 	type = ntoh32_ua((void *)&event->event_type);
 	flags = ntoh16_ua((void *)&event->flags);
 	status = ntoh32_ua((void *)&event->status);
+<<<<<<< HEAD
 	datalen = ntoh32_ua((void *)&event->datalen);
 	evlen = datalen + sizeof(bcm_event_t);
+=======
+
+	datalen = ntoh32_ua((void *)&event->datalen);
+	if (datalen > pktlen)
+		return (BCME_ERROR);
+
+	evlen = datalen + sizeof(bcm_event_t);
+	if (evlen > pktlen) {
+		return (BCME_ERROR);
+	}
+>>>>>>> upstream/cm-13.0
 
 	switch (type) {
 #ifdef PROP_TXSTATUS

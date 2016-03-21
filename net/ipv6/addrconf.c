@@ -961,6 +961,12 @@ enum {
 #endif
 	IPV6_SADDR_RULE_ORCHID,
 	IPV6_SADDR_RULE_PREFIX,
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_IPV6_OPTIMISTIC_DAD
+	IPV6_SADDR_RULE_NOT_OPTIMISTIC,
+#endif
+>>>>>>> upstream/cm-13.0
 	IPV6_SADDR_RULE_MAX
 };
 
@@ -988,6 +994,18 @@ static inline int ipv6_saddr_preferred(int type)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static inline bool ipv6_use_optimistic_addr(struct inet6_dev *idev)
+{
+#ifdef CONFIG_IPV6_OPTIMISTIC_DAD
+	return idev && idev->cnf.optimistic_dad && idev->cnf.use_optimistic;
+#else
+	return false;
+#endif
+}
+
+>>>>>>> upstream/cm-13.0
 static int ipv6_get_saddr_eval(struct net *net,
 			       struct ipv6_saddr_score *score,
 			       struct ipv6_saddr_dst *dst,
@@ -1048,10 +1066,23 @@ static int ipv6_get_saddr_eval(struct net *net,
 		score->scopedist = ret;
 		break;
 	case IPV6_SADDR_RULE_PREFERRED:
+<<<<<<< HEAD
 		/* Rule 3: Avoid deprecated and optimistic addresses */
 		ret = ipv6_saddr_preferred(score->addr_type) ||
 		      !(score->ifa->flags & (IFA_F_DEPRECATED|IFA_F_OPTIMISTIC));
 		break;
+=======
+	    {
+		/* Rule 3: Avoid deprecated and optimistic addresses */
+		u8 avoid = IFA_F_DEPRECATED;
+
+		if (!ipv6_use_optimistic_addr(score->ifa->idev))
+			avoid |= IFA_F_OPTIMISTIC;
+		ret = ipv6_saddr_preferred(score->addr_type) ||
+		      !(score->ifa->flags & avoid);
+		break;
+	    }
+>>>>>>> upstream/cm-13.0
 #ifdef CONFIG_IPV6_MIP6
 	case IPV6_SADDR_RULE_HOA:
 	    {
@@ -1097,6 +1128,17 @@ static int ipv6_get_saddr_eval(struct net *net,
 		score->matchlen = ret = ipv6_addr_diff(&score->ifa->addr,
 						       dst->addr);
 		break;
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_IPV6_OPTIMISTIC_DAD
+	case IPV6_SADDR_RULE_NOT_OPTIMISTIC:
+		/* Optimistic addresses still have lower precedence than other
+		 * preferred addresses.
+		 */
+		ret = !(score->ifa->flags & IFA_F_OPTIMISTIC);
+		break;
+#endif
+>>>>>>> upstream/cm-13.0
 	default:
 		ret = 0;
 	}
@@ -1285,7 +1327,13 @@ int ipv6_chk_addr(struct net *net, const struct in6_addr *addr,
 		if (!net_eq(dev_net(ifp->idev->dev), net))
 			continue;
 		if (ipv6_addr_equal(&ifp->addr, addr) &&
+<<<<<<< HEAD
 		    !(ifp->flags&IFA_F_TENTATIVE) &&
+=======
+		    (!(ifp->flags&IFA_F_TENTATIVE) ||
+		     (ipv6_use_optimistic_addr(ifp->idev) &&
+		      ifp->flags&IFA_F_OPTIMISTIC)) &&
+>>>>>>> upstream/cm-13.0
 		    (dev == NULL || ifp->idev->dev == dev ||
 		     !(ifp->scope&(IFA_LINK|IFA_HOST) || strict))) {
 			rcu_read_unlock_bh();
@@ -2967,6 +3015,10 @@ static void addrconf_dad_start(struct inet6_ifaddr *ifp, u32 flags)
 {
 	struct inet6_dev *idev = ifp->idev;
 	struct net_device *dev = idev->dev;
+<<<<<<< HEAD
+=======
+	bool notify = false;
+>>>>>>> upstream/cm-13.0
 
 	addrconf_join_solict(dev, &ifp->addr);
 
@@ -3006,13 +3058,30 @@ static void addrconf_dad_start(struct inet6_ifaddr *ifp, u32 flags)
 	 * Optimistic nodes can start receiving
 	 * Frames right away
 	 */
+<<<<<<< HEAD
 	if (ifp->flags & IFA_F_OPTIMISTIC)
 		ip6_ins_rt(ifp->rt);
+=======
+	if (ifp->flags & IFA_F_OPTIMISTIC) {
+		ip6_ins_rt(ifp->rt);
+		if (ipv6_use_optimistic_addr(idev)) {
+			/* Because optimistic nodes can use this address,
+			 * notify listeners. If DAD fails, RTM_DELADDR is sent.
+			 */
+			notify = true;
+		}
+	}
+>>>>>>> upstream/cm-13.0
 
 	addrconf_dad_kick(ifp);
 out:
 	spin_unlock(&ifp->lock);
 	read_unlock_bh(&idev->lock);
+<<<<<<< HEAD
+=======
+	if (notify)
+		ipv6_ifa_notify(RTM_NEWADDR, ifp);
+>>>>>>> upstream/cm-13.0
 }
 
 static void addrconf_dad_timer(unsigned long data)
@@ -3955,6 +4024,10 @@ static inline void ipv6_store_devconf(struct ipv6_devconf *cnf,
 	array[DEVCONF_ACCEPT_SOURCE_ROUTE] = cnf->accept_source_route;
 #ifdef CONFIG_IPV6_OPTIMISTIC_DAD
 	array[DEVCONF_OPTIMISTIC_DAD] = cnf->optimistic_dad;
+<<<<<<< HEAD
+=======
+	array[DEVCONF_USE_OPTIMISTIC] = cnf->use_optimistic;
+>>>>>>> upstream/cm-13.0
 #endif
 #ifdef CONFIG_IPV6_MROUTE
 	array[DEVCONF_MC_FORWARDING] = cnf->mc_forwarding;
@@ -4623,6 +4696,17 @@ static struct addrconf_sysctl_table
 			.proc_handler   = proc_dointvec,
 
 		},
+<<<<<<< HEAD
+=======
+		{
+			.procname       = "use_optimistic",
+			.data           = &ipv6_devconf.use_optimistic,
+			.maxlen         = sizeof(int),
+			.mode           = 0644,
+			.proc_handler   = proc_dointvec,
+
+		},
+>>>>>>> upstream/cm-13.0
 #endif
 #ifdef CONFIG_IPV6_MROUTE
 		{

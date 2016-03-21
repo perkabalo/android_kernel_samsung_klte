@@ -1963,9 +1963,12 @@ static void __perf_event_sync_stat(struct perf_event *event,
 	perf_event_update_userpage(next_event);
 }
 
+<<<<<<< HEAD
 #define list_next_entry(pos, member) \
 	list_entry(pos->member.next, typeof(*pos), member)
 
+=======
+>>>>>>> upstream/cm-13.0
 static void perf_event_sync_stat(struct perf_event_context *ctx,
 				   struct perf_event_context *next_ctx)
 {
@@ -5026,7 +5029,12 @@ static int perf_swevent_add(struct perf_event *event, int flags)
 
 static void perf_swevent_del(struct perf_event *event, int flags)
 {
+<<<<<<< HEAD
 	hlist_del_rcu(&event->hlist_entry);
+=======
+	if(!hlist_unhashed(&event->hlist_entry))
+		hlist_del_rcu(&event->hlist_entry);
+>>>>>>> upstream/cm-13.0
 }
 
 static void perf_swevent_start(struct perf_event *event, int flags)
@@ -6243,6 +6251,12 @@ SYSCALL_DEFINE5(perf_event_open,
 	if (err)
 		return err;
 
+<<<<<<< HEAD
+=======
+	if (attr.constraint_duplicate || attr.__reserved_1)
+		return -EINVAL;
+
+>>>>>>> upstream/cm-13.0
 	if (!attr.exclude_kernel) {
 		if (perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN))
 			return -EACCES;

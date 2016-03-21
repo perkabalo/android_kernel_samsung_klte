@@ -705,7 +705,11 @@ static int dhd_toe_get(dhd_info_t *dhd, int idx, uint32 *toe_ol);
 static int dhd_toe_set(dhd_info_t *dhd, int idx, uint32 toe_ol);
 #endif /* TOE */
 
+<<<<<<< HEAD
 static int dhd_wl_host_event(dhd_info_t *dhd, int *ifidx, void *pktdata,
+=======
+static int dhd_wl_host_event(dhd_info_t *dhd, int *ifidx, void *pktdata, size_t pktlen,
+>>>>>>> upstream/cm-13.0
                              wl_event_msg_t *event_ptr, void **data_ptr);
 #if defined(SUPPORT_P2P_GO_PS)
 #ifdef PROP_TXSTATUS
@@ -2247,7 +2251,12 @@ dhd_rx_frame(dhd_pub_t *dhdp, int ifidx, void *pktbuf, int numpkt, uint8 chan)
 			skb_mac_header(skb),
 #else
 			skb->mac.raw,
+<<<<<<< HEAD
 #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 22) */
+=======
+#endif
+			len - 2,
+>>>>>>> upstream/cm-13.0
 			&event,
 			&data);
 
@@ -6460,13 +6469,21 @@ dhd_get_wireless_stats(struct net_device *dev)
 #endif /* defined(WL_WIRELESS_EXT) */
 
 static int
+<<<<<<< HEAD
 dhd_wl_host_event(dhd_info_t *dhd, int *ifidx, void *pktdata,
+=======
+dhd_wl_host_event(dhd_info_t *dhd, int *ifidx, void *pktdata, size_t pktlen,
+>>>>>>> upstream/cm-13.0
 	wl_event_msg_t *event, void **data)
 {
 	int bcmerror = 0;
 	ASSERT(dhd != NULL);
 
+<<<<<<< HEAD
 	bcmerror = wl_host_event(&dhd->pub, ifidx, pktdata, event, data);
+=======
+	bcmerror = wl_host_event(&dhd->pub, ifidx, pktdata, pktlen, event, data);
+>>>>>>> upstream/cm-13.0
 	if (bcmerror != BCME_OK)
 		return (bcmerror);
 

@@ -3072,7 +3072,11 @@ int adreno_idle(struct kgsl_device *device)
 			adreno_getreg(adreno_dev, ADRENO_REG_RBBM_STATUS) << 2,
 			0x110, 0x110);
 
+<<<<<<< HEAD
 	while (time_before(jiffies, wait)) {
+=======
+	do {
+>>>>>>> upstream/cm-13.0
 		/*
 		 * If we fault, stop waiting and return an error. The dispatcher
 		 * will clean up the fault from the work queue, but we need to
@@ -3085,7 +3089,23 @@ int adreno_idle(struct kgsl_device *device)
 
 		if (adreno_isidle(device))
 			return 0;
+<<<<<<< HEAD
 	}
+=======
+
+	} while (time_before(jiffies, wait));
+
+	/*
+	 * Under rare conditions, preemption can cause the while loop to exit
+	 * without checking if the gpu is idle. check one last time before we
+	 * return failure.
+	 */
+	if (adreno_gpu_fault(adreno_dev) != 0)
+			return -EDEADLK;
+
+	if (adreno_isidle(device))
+			return 0;
+>>>>>>> upstream/cm-13.0
 
 	return -ETIMEDOUT;
 }

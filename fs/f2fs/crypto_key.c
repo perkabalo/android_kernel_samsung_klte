@@ -13,7 +13,11 @@
 #include <keys/user-type.h>
 #include <linux/random.h>
 #include <linux/scatterlist.h>
+<<<<<<< HEAD
 #include <uapi/linux/keyctl.h>
+=======
+#include <linux/keyctl.h>
+>>>>>>> upstream/cm-13.0
 #include <crypto/hash.h>
 #include <linux/f2fs_fs.h>
 
